@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "simulated-annealing"
+version = "0.1.0"
+description = "A basic implementation of local search methods: hill climbing and simulated annealing."
+authors = ["srrmtt <100603487+srrmtt@users.noreply.github.com>"]
+readme = "README.md"
+packages = [{include = "simulated_annealing"}]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+
+[tool.poetry.group.dev.dependencies]
+tqdm = "^4.64.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
