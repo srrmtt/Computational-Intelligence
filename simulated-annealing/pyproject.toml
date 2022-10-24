@@ -8,6 +8,13 @@ packages = [{include = "simulated_annealing"}]
 
 [tool.poetry.dependencies]
 python = "^3.9"
+pyface = "^7.4.2"
+yarl = "^1.8.1"
+typing-extensions = "^4.4.0"
+tomli = "^2.0.1"
+six = "^1.16.0"
+setuptools = "^65.5.0"
+pyparsing = "^3.0.9"
 
 [tool.poetry.group.dev.dependencies]
 tqdm = "^4.64.1"
