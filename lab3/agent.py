@@ -6,6 +6,8 @@ from minmax import MinMaxAgent
 import random
 from utility import run_benchmark
 import pickle
+
+
 class RLAgent(object):
     def __init__(self, states, alpha=0.15, random_factor=0.2):  # 80% explore, 20% exploit
         self.state_history = [(tuple(states),0)]  # state, reward
@@ -22,7 +24,6 @@ class RLAgent(object):
             #print(new_state)
             self.G[tuple(new_state)] = numpy.random.uniform(low=1.0, high=0.1)
             self.init_reward(new_state,row+1)
-
     def get_reward(self,state):
         return self.G[state]
 

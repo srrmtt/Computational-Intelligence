@@ -2,7 +2,7 @@ from nim import Nim
 from utility import generate_random_probabilities, play, run_benchmark
 import random
 from expert_strategy import System
-
+from tqdm import tqdm
 import pickle
 
 
@@ -101,8 +101,8 @@ class EvolvedRulesAgent(System):
         # add new element to the population
         population = [(generate_random_probabilities(self.num_cook_status), 0)
                       for _ in range(self.pop_size)]
-        for i in range(self.num_generations):
-            print(i)
+        for i in tqdm(range(self.num_generations)):
+            
             for _ in range(self.num_round):
                 index_p1 = tournament(population)
                 index_p2 = tournament(population)
@@ -122,7 +122,6 @@ class EvolvedRulesAgent(System):
             population = [(e[0], 0) for _, e in enumerate(population)]
             population += [(generate_random_probabilities(self.num_cook_status), 0)
                            for _ in range(self.pop_size//2)]
-        print(f"best strategy {population[0]}")
         self.probabilities = population[0][0]
         return population[0][0]
 
@@ -145,7 +144,7 @@ class EvolvedRulesAgent(System):
 
         probabilities = [
         1/self.num_cook_status for _ in range(self.num_cook_status)]
-        for _ in range(self.num_round):
+        for _ in tqdm(range(self.num_round)):
             prob1, prob2 = select_stategies()
             p1_strategy = EvolvedRulesAgent.from_probabilities(prob1)
             p2_strategy = EvolvedRulesAgent.from_probabilities(prob2)
