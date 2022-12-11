@@ -1,5 +1,5 @@
 # Lab 3 : Policy Serch
-This code has been written by Serra Matteo s303513 and Magnaldi Matteo for the course of Computational Intelligence ay 2022-2023. The goal of this code is to play the nim game with an expert system or an evaluated rule strategy. To do that we wrote 3 methods:
+This code has been written by Serra Matteo s303513 and Magnaldi Matteo s296852 for the course of Computational Intelligence ay 2022-2023. The goal of this code is to play the nim game with an expert system or an evaluated rule strategy. To do that we wrote 3 methods:
 - `expert_system` : this function use an informed system to make the next move, all the choices done in this function are made with the nim sum approach, if we specify a `k` as limit of elements to take this function will resolve the *subtractive game*. 
 - the second approach use an evolutionary algorithm with tournament to tune the porbabilities of some simple policies. 
 
