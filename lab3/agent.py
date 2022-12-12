@@ -6,8 +6,9 @@ from minmax import MinMaxAgent
 import random
 from utility import run_benchmark
 import pickle
+from evo_rule_strategy import EvolvedRulesAgent
 
-
+from tqdm import tqdm
 class RLAgent(object):
     def __init__(self, states, alpha=0.15, random_factor=0.2):  # 80% explore, 20% exploit
         self.state_history = [(tuple(states),0)]  # state, reward
@@ -61,8 +62,25 @@ class RLAgent(object):
         self.state_history = []
         
         self.random_factor -= 10e-5  # decrease random factor each episode of play
-    
-    def train(self, nim_dim: int ,n_rounds: int = 10_000, show_epoch_results: bool = False):
+    @classmethod
+    def tune(cls, n_iter_train: int, n_iter_test: int, nim_dim: int, alphas: list, epsilons: list, GA_dump:str = None) -> list:
+        """
+        Try different combination of alphas and epsilons and returns the win_rates as a dictionary (alpha, epsilon) -> win rate.
+        If you specify a GA_dump path it will partially train the model with it otherwhise it uses a minmax agent that is more shallow
+        to train. 
+        """
+        win_rates = []
+        nim = Nim(nim_dim)
+        for alpha in tqdm(alphas):
+            for epsilon in epsilons:
+                rl_agent = cls(nim._rows, alpha, epsilon)
+                rl_agent.train(nim_dim, n_iter_train, GA_dump=GA_dump, show_epoch_results=False)
+                rl_agent.random_factor = 0.0
+                wr = run_benchmark(n_iter_test, nim_dim, rl_agent.choose_action, ExpertSystem.next_move, show_progress=False)
+                win_rates.append(((alpha, epsilon), wr))
+        return win_rates
+
+    def train(self, nim_dim: int ,n_rounds: int = 14_000, show_epoch_results: bool = False, show_progress=False, GA_dump:str = None):
         """
         This method trains the RL agent using different agents: the first 1000 iterations it plays against
         the worst possible player, and then it play against stronger opponent (random move, min max agent and expert system).
@@ -76,28 +94,29 @@ class RLAgent(object):
                 nim.niming(row,k)
             return player
 
-
-        for i in range(n_rounds):
+        random_factor = self.random_factor
+        agent_name = ""
+        for i in tqdm(range(n_rounds), disable=not show_progress):
             if i == 0:
-                self.random_factor = 0.3
-                print(f"play against worst player")
+                agent_name = "worst agent"
+                self.random_factor = random_factor
                 opponent_move = System.worst_move
             elif i == 2000:
-                self.random_factor = 0.3
-                print(f"play against random player")
+                agent_name = "random agent"
+                self.random_factor = random_factor
                 opponent_move = System.random_move
-            elif i == 3000:
-                self.random_factor = 0.3
-                print(f"play against robot player")
-                opponent_move = self.choose_action
             elif i == 6000:
-                self.random_factor = 0.3
-                print(f"play against minmax player")
-                minmax = MinMaxAgent()
-                opponent_move = minmax.next_move
-            elif i == 9000:
-                self.random_factor = 0.1
-                print(f"play against expert player")
+                agent_name = "itself"
+                self.random_factor = random_factor
+                opponent_move = self.choose_action
+            elif i == 10_000:
+                agent_name = "minmax agent" if GA_dump is None else "GA agent"
+                self.random_factor = random_factor
+                agent = MinMaxAgent() if GA_dump is None else EvolvedRulesAgent.from_file(GA_dump)
+                opponent_move = agent.next_move
+            elif i == 12_000:
+                agent_name = "expert agent"
+                self.random_factor = random_factor
                 opponent_move = ExpertSystem.next_move
 
             turn = random.randint(0,1)
@@ -142,8 +161,8 @@ class RLAgent(object):
             #print(f"G after learn: {robot.G}")
             if i % 1000 == 0 and show_epoch_results:
                 old_random_factor = self.random_factor
-                wr = run_benchmark(10000,nim_dim,self.choose_action,opponent_move)
-                print(f"win rate: {wr}")
+                wr = run_benchmark(10000,nim_dim,self.choose_action,opponent_move, show_progress=False)
+                print(f"[Epoch: {i}] training against {agent_name} ----> win rate: {wr}%")
                 self.random_factor = old_random_factor
     def dump(self, path):
         """

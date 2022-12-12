@@ -3,8 +3,8 @@ from math import inf
 import random
 from typing import Callable
 from nim import Nim
-
-def run_benchmark(n_games: int, n: int,p1_strategy: Callable,p2_strategy: Callable, k: int=None):
+from tqdm import tqdm
+def run_benchmark(n_games: int, n: int,p1_strategy: Callable,p2_strategy: Callable, k: int=None, show_progress: bool = True):
     '''
     Run n_games nim games of size n with two player p1 and p2.
     @param
@@ -17,10 +17,14 @@ def run_benchmark(n_games: int, n: int,p1_strategy: Callable,p2_strategy: Callab
     '''
     # play a n_games number of match and count the % of victory of the first strategy
     wins = 0
-    for i in range(n_games):
-        nim = Nim(n,k)
-        wins += play(nim,p1_strategy,p2_strategy)
-    
+    if show_progress:
+        for i in tqdm(range(n_games)):
+            nim = Nim(n,k)
+            wins += play(nim,p1_strategy,p2_strategy)
+    else:
+        for i in range(n_games):
+            nim = Nim(n,k)
+            wins += play(nim,p1_strategy,p2_strategy)
     return wins/n_games*100
 
 def play(nim: Nim,p1_strategy: Callable,p2_strategy: Callable):

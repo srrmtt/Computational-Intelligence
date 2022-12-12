@@ -6,6 +6,7 @@ from math import inf
 class System:
     @classmethod
     def random_move(cls, nim:Nim):
+        random.seed()
         #select a random valid row (!= 0) and select a random number of element to remove
         rand_row = random.randint(0,len(nim._rows)-1)
         while nim._rows[rand_row] == 0:

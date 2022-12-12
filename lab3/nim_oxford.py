@@ -4,6 +4,8 @@ import time
 from expert_strategy import ExpertSystem,System
 from nim import Nim
 from utility import nim_sum
+
+from tqdm import tqdm
 class NimAI():
 
     def __init__(self, alpha=0.5, epsilon=0.1):
@@ -109,7 +111,7 @@ class NimAI():
 
 
 
-def train(n_iter: int, board_dim: int, alpha: float, espilon: float):
+def train(n_iter: int, board_dim: int, alpha: float, espilon: float, show_progress=False):
     """
     Train an AI by playing `n` games against itself, against a random system and in the end against 
     an expert system.
@@ -118,7 +120,7 @@ def train(n_iter: int, board_dim: int, alpha: float, espilon: float):
     player = NimAI(alpha=alpha, epsilon=espilon)
 
     # Play n games
-    for i in range(n_iter):
+    for i in tqdm(range(n_iter), disable=not show_progress):
         # print(f"Playing training game {i + 1}")
         game = Nim(board_dim)
 

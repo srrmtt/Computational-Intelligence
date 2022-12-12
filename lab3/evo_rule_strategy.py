@@ -111,7 +111,7 @@ class EvolvedRulesAgent(System):
                     population[index_p1][0])
                 p2_strategy = EvolvedRulesAgent.from_probabilities(
                     population[index_p2][0])
-                if run_benchmark(self.num_iter, self.nim_dim, p1_strategy.next_move, p2_strategy.next_move) > 50.0:
+                if run_benchmark(self.num_iter, self.nim_dim, p1_strategy.next_move, p2_strategy.next_move, show_progress=False) > 50.0:
                     population[index_p1] = (
                         population[index_p1][0], population[index_p1][1] + 1)
                 else:
@@ -148,7 +148,7 @@ class EvolvedRulesAgent(System):
             prob1, prob2 = select_stategies()
             p1_strategy = EvolvedRulesAgent.from_probabilities(prob1)
             p2_strategy = EvolvedRulesAgent.from_probabilities(prob2)
-            if run_benchmark(self.num_iter, self.nim_dim, p1_strategy.next_move, p2_strategy.next_move) > 50.0:
+            if run_benchmark(self.num_iter, self.nim_dim, p1_strategy.next_move, p2_strategy.next_move, show_progress=False) > 50.0:
                 if probabilities[prob1] + self.q < 1 and probabilities[prob2] - self.q >= 0:
                     probabilities[prob1] += self.q
                     probabilities[prob2] -= self.q
